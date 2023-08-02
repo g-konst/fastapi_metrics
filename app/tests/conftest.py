@@ -23,7 +23,6 @@ async def prepare_database():
     assert settings.DB_NAME == "test"
 
     async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
         await conn.run_sync(Base.metadata.create_all)
 
     async with async_session_maker() as session:
@@ -36,6 +35,11 @@ async def prepare_database():
                 query = insert(model).values(values)
                 await session.execute(query)
         await session.commit()
+
+    yield
+
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
 
 
 @pytest.fixture(scope="function")
