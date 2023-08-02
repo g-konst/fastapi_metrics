@@ -1,0 +1,9 @@
+[flake8]
+count = 1
+show-source = 1
+extend-exclude =
+    .venv
+    migrations
+
+; max-line-length = 79
+; extend-ignore = E203
