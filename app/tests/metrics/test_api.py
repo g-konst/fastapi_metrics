@@ -2,6 +2,7 @@ import pytest
 from httpx import AsyncClient
 
 from app.metrics.schemas import SMetricsInfo
+from app.metrics.service import MetricsService
 
 
 @pytest.mark.parametrize("service_name,metrics_count", [
@@ -25,7 +26,7 @@ async def test_get_metrics(
 
 
 @pytest.mark.parametrize("service_name,path,response_time_ms,status_code", [
-    ("users", "/me", 12, 201),
+    ("users", "/profile", 12, 201),
     ("blog", "/wall", 10, 201),
     ("news", "/feed", "new", 422),
 ])
@@ -36,8 +37,8 @@ async def test_add_metrics(
     status_code: int,
     ac: AsyncClient
 ):
-    initial_response = await ac.get(f"/metrics/{service_name}")
-    initial_metrics_count = len(initial_response.json())
+    initial_response = await MetricsService.get(service_name)
+    initial_metrics_count = len(initial_response)
 
     response = await ac.post("/metrics", json={
         "service_name": service_name,
@@ -46,8 +47,8 @@ async def test_add_metrics(
     })
     assert response.status_code == status_code
 
-    response = await ac.get(f"/metrics/{service_name}")
-    metrics_count = len(initial_response.json())
+    db_response = await MetricsService.get(service_name)
+    metrics_count = len(db_response)
     if response.status_code == 201:
         assert metrics_count == initial_metrics_count + 1
     else:
