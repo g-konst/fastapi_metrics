@@ -1,0 +1,17 @@
+[
+    {
+        "service_name": "users",
+        "path": "/users",
+        "response_time_ms": 12
+    },
+    {
+        "service_name": "users",
+        "path": "/me",
+        "response_time_ms": 25
+    },
+    {
+        "service_name": "blog",
+        "path": "/posts",
+        "response_time_ms": 3
+    }
+]
